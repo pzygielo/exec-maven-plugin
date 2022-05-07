@@ -15,7 +15,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>@project.groupId@</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
@@ -42,7 +42,7 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
+            <groupId>@project.groupId@</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
               <executable>echo.cmd</executable>
@@ -61,7 +61,7 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
+            <groupId>@project.groupId@</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
               <executable>echo</executable>

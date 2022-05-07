@@ -43,7 +43,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteWatchdog;
@@ -500,6 +499,10 @@ public class ExecMojo
 
             registerSourceRoots();
         }
+        catch ( ComponentLookupException e )
+        {
+            throw new MojoExecutionException( "Command execution failed.", e );
+        }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "I/O Error", e );
@@ -822,7 +825,7 @@ public class ExecMojo
 
     private ProcessDestroyer processDestroyer;
 
-    CommandLine getExecutablePath( Map<String, String> enviro, File dir )
+    CommandLine getExecutablePath( Map<String, String> enviro, File dir ) throws ComponentLookupException
     {
         File execFile = new File( executable );
         String exec = null;
@@ -1068,26 +1071,19 @@ public class ExecMojo
         return successCodes;
     }
 
-    private Toolchain getToolchain()
+    private Toolchain getToolchain() throws ComponentLookupException
     {
         Toolchain tc = null;
 
-        try
+        if ( session != null ) // session is null in tests..
         {
-            if ( session != null ) // session is null in tests..
-            {
-                ToolchainManager toolchainManager =
-                    (ToolchainManager) session.getContainer().lookup( ToolchainManager.ROLE );
+            ToolchainManager toolchainManager =
+                (ToolchainManager) session.getContainer().lookup( ToolchainManager.ROLE );
 
-                if ( toolchainManager != null )
-                {
-                    tc = toolchainManager.getToolchainFromBuildContext( toolchain, session );
-                }
+            if ( toolchainManager != null )
+            {
+                tc = toolchainManager.getToolchainFromBuildContext( toolchain, session );
             }
-        }
-        catch ( ComponentLookupException componentLookupException )
-        {
-            // just ignore, could happen in pre-2.0.9 builds..
         }
         return tc;
     }

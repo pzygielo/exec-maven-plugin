@@ -107,14 +107,7 @@ class URLClassLoaderBuilder
     {
         static
         {
-            try
-            {
-                registerAsParallelCapable();
-            }
-            catch ( Exception e )
-            {
-                // no-op, not that important
-            }
+            registerAsParallelCapable();
         }
 
         private final String jre;
