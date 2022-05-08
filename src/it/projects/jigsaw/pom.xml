@@ -22,7 +22,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>@project.groupId@</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>

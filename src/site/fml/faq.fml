@@ -20,7 +20,7 @@ under the License.
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="question1">
-     <question>How to execute the plugin multiple times ?</question>
+     <question>How to execute the plugin multiple times?</question>
      <answer>
        <p>Use several execution nodes each with a different id. Don't forget to bind each execution to a phase.</p>
        <p>Read <a href="http://article.gmane.org/gmane.comp.java.maven-plugins.mojo.user/1307">the full answer</a>.</p>

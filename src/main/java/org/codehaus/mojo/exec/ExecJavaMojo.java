@@ -578,7 +578,7 @@ public class ExecJavaMojo
                     .setExclusions( classpathFilenameExclusions )
                     .build();
         }
-        catch ( NullPointerException | IOException e )
+        catch ( IOException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }

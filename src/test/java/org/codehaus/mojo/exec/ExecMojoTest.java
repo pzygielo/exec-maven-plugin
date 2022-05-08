@@ -1,5 +1,7 @@
 package org.codehaus.mojo.exec;
 
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -276,7 +278,7 @@ public class ExecMojoTest
 
     // MEXEC-12, MEXEC-72
     public void testGetExecutablePath()
-        throws IOException
+        throws ComponentLookupException, IOException
     {
 
         ExecMojo realMojo = new ExecMojo();
@@ -325,7 +327,7 @@ public class ExecMojoTest
     // if there are "node" and "node.cmd" the mojo should pick "node.cmd"
     // see https://github.com/mojohaus/exec-maven-plugin/issues/42
     public void testGetExecutablePathPreferExecutableExtensionsOnWindows()
-    		throws IOException
+        throws ComponentLookupException, IOException
     {
     	// this test is for Windows
     	if (!OS.isFamilyWindows()) {

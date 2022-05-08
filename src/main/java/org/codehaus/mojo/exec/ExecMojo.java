@@ -500,6 +500,10 @@ public class ExecMojo
 
             registerSourceRoots();
         }
+        catch ( ComponentLookupException e )
+        {
+            throw new MojoExecutionException( "Command execution failed.", e );
+        }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "I/O Error", e );
@@ -623,7 +627,7 @@ public class ExecMojo
     }
 
     private void handleArguments( List<String> commandArguments )
-        throws MojoExecutionException, IOException
+        throws IOException
     {
         String specialArg = null;
 
@@ -641,7 +645,7 @@ public class ExecMojo
                     // NOTE: the jar will contain the classpath and the main class
                     commandArguments.add( "-jar" );
 
-                    File tmpFile = createJar( computePath( (Classpath) argument ),
+                    File tmpFile = createJar( computePath( (AbstractPath) argument ),
                                               (String) arguments.get( ++i ) );
                     commandArguments.add( tmpFile.getAbsolutePath() );
                 }
@@ -652,7 +656,7 @@ public class ExecMojo
                     StringBuilder modulePath = new StringBuilder();
                     modulePath.append( '"' );
 
-                    for ( Iterator<String> it = computePath( (Modulepath) argument ).iterator(); it.hasNext(); )
+                    for ( Iterator<String> it = computePath( (AbstractPath) argument ).iterator(); it.hasNext(); )
                     {
                         modulePath.append( it.next().replace( "\\", "\\\\" ) );
                         if ( it.hasNext() )
@@ -676,15 +680,10 @@ public class ExecMojo
                 continue;
             }
 
-            if ( argument instanceof Classpath )
+            if ( argument instanceof AbstractPath )
             {
-                Classpath specifiedClasspath = (Classpath) argument;
-                commandArguments.add( computeClasspathString( specifiedClasspath ) );
-            }
-            else if ( argument instanceof Modulepath )
-            {
-                Modulepath specifiedModulepath = (Modulepath) argument;
-                commandArguments.add( computeClasspathString( specifiedModulepath ) );
+                AbstractPath specifiedPath = (AbstractPath) argument;
+                commandArguments.add( computeClasspathString( specifiedPath ) );
             }
             else if ( (argument instanceof String) && (isLongModulePathArgument( (String) argument ) || isLongClassPathArgument( (String) argument )) )
             {
@@ -822,7 +821,7 @@ public class ExecMojo
 
     private ProcessDestroyer processDestroyer;
 
-    CommandLine getExecutablePath( Map<String, String> enviro, File dir )
+    CommandLine getExecutablePath( Map<String, String> enviro, File dir ) throws ComponentLookupException
     {
         File execFile = new File( executable );
         String exec = null;
@@ -1068,26 +1067,19 @@ public class ExecMojo
         return successCodes;
     }
 
-    private Toolchain getToolchain()
+    private Toolchain getToolchain() throws ComponentLookupException
     {
         Toolchain tc = null;
 
-        try
+        if ( session != null ) // session is null in tests..
         {
-            if ( session != null ) // session is null in tests..
-            {
-                ToolchainManager toolchainManager =
-                    (ToolchainManager) session.getContainer().lookup( ToolchainManager.ROLE );
+            ToolchainManager toolchainManager =
+                (ToolchainManager) session.getContainer().lookup( ToolchainManager.ROLE );
 
-                if ( toolchainManager != null )
-                {
-                    tc = toolchainManager.getToolchainFromBuildContext( toolchain, session );
-                }
+            if ( toolchainManager != null )
+            {
+                tc = toolchainManager.getToolchainFromBuildContext( toolchain, session );
             }
-        }
-        catch ( ComponentLookupException componentLookupException )
-        {
-            // just ignore, could happen in pre-2.0.9 builds..
         }
         return tc;
     }
